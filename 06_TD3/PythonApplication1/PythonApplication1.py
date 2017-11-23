@@ -29,6 +29,7 @@ class Maillon(object):
 class LC(object):
     def __init__(self, premier=None):
         self.premier = premier
+        self.__taille = 0
 
     @property
     def premier(self):
@@ -40,6 +41,17 @@ class LC(object):
             raise TypeError("Le premier doit etre un maillon!")
         else:
             self.__premier = maillon
+    
+    @property
+    def taille(self):
+        return self.__taille
+
+    @taille.setter
+    def taille(self, value):
+        if value is not int:
+            raise TypeError("Il faut entrer un integer!")
+        else:
+            self.__taille = value
 
     def estVide(self):
         if self.premier is None:
@@ -52,19 +64,20 @@ class LC(object):
             raise TypeError("La liste est déjà vide!")
         else:
             self.premier = self.premier.suivant
+            self.taille -= 1
 
     def vider(self):
         self.premier = None
-        #while self.premier is not None:
-        #    self.supprimerPremier();
+        self.taille = 0
 
-    def ajouterEnTete(x,self):
+    def ajouterEnTete(self, x):
         tete = Maillon(x)
         tete.suivant = self.premier
         self.premier = tete
+        self.taille += 1
 
     def ajouterApres(self, x, y):
-        if list.estVide == True:
+        if list.estVide() == True:
             raise TypeError("La liste est vide!")
         else:
             nuveauMaillon = Maillon(x)
@@ -75,9 +88,10 @@ class LC(object):
                 maillon = maillon.suivant
             nuveauMaillon.suivant = maillon.suivant
             maillon.suivant = nuveauMaillon
+            self.taille += 1
 
     def supprimerSuivant(self, x):
-        if list.estVide == True:
+        if list.estVide() == True:
             raise TypeError("La liste est vide!")
         else:
             maillon = self.premier
@@ -87,27 +101,36 @@ class LC(object):
                 maillon = maillon.suivant
             maillon2 = maillon.suivant
             maillon.suivant = maillon2.suivant
+            self.taille -= 1
 
     def __len__(self):
-        if self.estVide() == True:
-            return 0
-        else:
-            maillon = self.premier
-            length = 1
-            while maillon.suivant is not None:
-                maillon = maillon.suivant
-                length += 1
-            return length
+        return self.taille
+        #if self.estVide() == True:
+        #    return 0
+        #else:
+        #    maillon = self.premier
+        #    length = 1
+        #    while maillon.suivant is not None:
+        #        maillon = maillon.suivant
+        #        length += 1
+        #    return length
 
     def __str__(self):
-        if list.estVide == True:
-            print("La liste est vide")
+        if list.estVide() == True:
+             return "La liste est vide"
         else:
             maillon = self.premier
             while maillon.suivant is not None:
-                print("Maillon (%s, suivant %s)" % (str(maillon.donnee), repr(maillon.suivant)))
-            print("Maillon (%s, suivant None)" % (str(maillon.donnee)))
+                print("Maillon (%s, suivant %s)" % (str(maillon.donnee), repr(maillon.suivant.donnee)))
+                maillon = maillon.suivant
+            return "Maillon (%s, suivant None)" % (str(maillon.donnee))
+
+
+
 
 list = LC()
-list. ajouterEnTete(3)
+list.ajouterEnTete(3)
+list.ajouterApres(2,3)
+list.supprimerSuivant(3)
 print(len(list))
+print(list)
