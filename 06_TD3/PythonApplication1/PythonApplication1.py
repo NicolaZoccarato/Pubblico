@@ -25,6 +25,29 @@ class Maillon(object):
     def __str__(self):
         return "Maillon (%s, suivant %s)" % (str(self.donnee), repr(self.suivant))
 
+    def __lt__(self, x):
+        return self.donnee < x.donnee
+
+
+
+class itLC():
+    def __init__(self, list):
+        self.__list = list
+        self.__position = len(list)
+    def __iter__(self):
+        self.i = list.premier
+        return self
+    def __next__(self):
+        next = self.i
+        self.i = self.i.suivant
+        return next
+    #def __next__(self):
+    #    if self.__position == 0:
+    #        raise StopIteration
+    #    self.__position += 1
+    #    return self.__list[self.__position]
+
+
 
 class LC(object):
     def __init__(self, premier=None):
@@ -48,10 +71,11 @@ class LC(object):
 
     @taille.setter
     def taille(self, value):
-        if value is not int:
+        try:
+           value = int(value)
+        except ValueError:
             raise TypeError("Il faut entrer un integer!")
-        else:
-            self.__taille = value
+        self.__taille = value
 
     def estVide(self):
         if self.premier is None:
@@ -70,7 +94,7 @@ class LC(object):
         self.premier = None
         self.taille = 0
 
-    def ajouterEnTete(self, x):
+    def ajouterEnTete(self, x):         #From the text of the exercise I understood that x should be the content of a node, not a Maillon-type object. The same for ajouterApres and supprimerSuivant
         tete = Maillon(x)
         tete.suivant = self.premier
         self.premier = tete
@@ -125,12 +149,33 @@ class LC(object):
                 maillon = maillon.suivant
             return "Maillon (%s, suivant None)" % (str(maillon.donnee))
 
+    def __iter__(self):
+        return itLC(self)
 
+    def inserer(self, elt, debut = None):       #I suppose growing order of the nodes. "debut" is the content of a node.
+        if debut is None:
+            maillon = self.premier.suivant
+        else:
+            iterator = itLC(self)
+            for m in iterator:
+                if m.donnee == debut:
+                    maillon = m.suivant
+                    break
+        x = Maillon(elt)
+        while maillon.suivant is not None:
+            if maillon < x:
+                x.suivant = maillon.suivant
+                maillon.suivant = x
+            else:
+                maillon = maillon.suivant
+                
+            
 
 
 list = LC()
-list.ajouterEnTete(3)
-list.ajouterApres(2,3)
-list.supprimerSuivant(3)
+list.ajouterEnTete(2)
+list.ajouterApres(3,2)
+list.ajouterApres(5,3)
+list.inserer(4,2)
 print(len(list))
 print(list)
